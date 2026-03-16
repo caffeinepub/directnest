@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Playfair Display';
+  src: url('/assets/fonts/PlayfairDisplay.woff2') format('woff2');
+  font-weight: 400 800;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  src: url('/assets/fonts/PlusJakartaSans.woff2') format('woff2');
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --radius: 0.75rem;
+    /* Deep teal primary */
+    --primary: 0.42 0.14 200;
+    --primary-foreground: 0.99 0 0;
+    /* Warm amber accent */
+    --accent: 0.75 0.15 80;
+    --accent-foreground: 0.15 0 0;
+    --background: 0.98 0 0;
+    --foreground: 0.15 0.02 220;
+    --card: 1 0 0;
+    --card-foreground: 0.15 0.02 220;
+    --popover: 1 0 0;
+    --popover-foreground: 0.15 0.02 220;
+    --secondary: 0.94 0.02 200;
+    --secondary-foreground: 0.35 0.10 200;
+    --muted: 0.95 0.01 220;
+    --muted-foreground: 0.52 0.02 220;
+    --destructive: 0.58 0.24 27;
+    --destructive-foreground: 0.99 0 0;
+    --border: 0.90 0.02 220;
+    --input: 0.90 0.02 220;
+    --ring: 0.42 0.14 200;
+    --chart-1: 0.42 0.14 200;
+    --chart-2: 0.75 0.15 80;
+    --chart-3: 0.58 0.18 150;
+    --chart-4: 0.65 0.20 30;
+    --chart-5: 0.50 0.16 270;
+    --sidebar: 0.96 0.02 200;
+    --sidebar-foreground: 0.15 0.02 220;
+    --sidebar-primary: 0.42 0.14 200;
+    --sidebar-primary-foreground: 0.99 0 0;
+    --sidebar-accent: 0.75 0.15 80;
+    --sidebar-accent-foreground: 0.15 0 0;
+    --sidebar-border: 0.88 0.02 200;
+    --sidebar-ring: 0.42 0.14 200;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  }
+  h1, h2, h3 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+.verified-badge {
+  background: oklch(0.92 0.12 150);
+  color: oklch(0.28 0.10 150);
+}
+.price-above {
+  background: oklch(0.95 0.10 40);
+  color: oklch(0.40 0.15 40);
+}
+.price-fair {
+  background: oklch(0.92 0.10 150);
+  color: oklch(0.28 0.10 150);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

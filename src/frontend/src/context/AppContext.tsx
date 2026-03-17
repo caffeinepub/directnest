@@ -1,94 +1,198 @@
 import {
   type ReactNode,
   createContext,
-  useCallback,
   useContext,
+  useEffect,
   useState,
 } from "react";
-import { properties as mockProperties } from "../data/mockData";
-import type { Property as MockProperty } from "../data/mockData";
-import type { DisplayProperty } from "../types/property";
 
-interface AppUser {
+export type UserRole = "seeker" | "owner" | "agent";
+
+export interface User {
   id: string;
-  name: string;
+  fullName: string;
   email: string;
-  role: "seeker" | "owner" | "agent" | "admin";
+  phone: string;
+  role: UserRole;
 }
 
-function mockToDisplay(p: MockProperty): DisplayProperty {
-  return {
-    id: p.id,
-    title: p.title,
-    type: p.type,
-    listingFor: p.listingFor,
-    price: p.price,
-    location: p.location,
-    address: p.address,
-    description: p.description,
-    bedrooms: p.bedrooms,
-    bathrooms: p.bathrooms,
-    sizeSqm: p.sizeSqm,
-    amenities: p.amenities,
-    photos: p.photos,
-    imageKeys: [],
-    verified: p.verified,
-    status: p.status,
-    ownerId: p.ownerId,
-    agentId: p.agentId,
-    createdAt: p.createdAt,
-    avgMarketPrice: p.avgMarketPrice,
-    isBackend: false,
-  };
+export interface Property {
+  id: string;
+  title: string;
+  price: number;
+  location: string;
+  description: string;
+  imageUrl: string;
+  ownerId: string;
+  ownerName: string;
+  ownerPhone: string;
+  ownerRole: UserRole;
+  createdAt: number;
 }
 
-export const mockDisplayProperties: DisplayProperty[] =
-  mockProperties.map(mockToDisplay);
-
-interface AppContextType {
-  currentUser: AppUser | null;
-  savedProperties: string[];
-  toggleSaved: (id: string) => void;
-  isSaved: (id: string) => boolean;
-  login: (user: AppUser) => void;
+interface AppContextValue {
+  user: User | null;
+  login: (user: User) => void;
   logout: () => void;
-  isAuthenticated: boolean;
+  properties: Property[];
+  addProperty: (
+    p: Omit<
+      Property,
+      "id" | "ownerId" | "ownerName" | "ownerPhone" | "ownerRole" | "createdAt"
+    >,
+  ) => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const SEED_PROPERTIES: Property[] = [
+  {
+    id: "1",
+    title: "Luxury 3-Bedroom Apartment",
+    price: 4500000,
+    location: "Lekki Phase 1, Lagos",
+    description:
+      "A stunning 3-bedroom apartment in the heart of Lekki with premium finishes, 24/7 power supply, and excellent security. Ideal for families and professionals.",
+    imageUrl: "/assets/generated/prop-1.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Emeka Okafor",
+    ownerPhone: "+2348031234567",
+    ownerRole: "owner",
+    createdAt: Date.now() - 86400000 * 5,
+  },
+  {
+    id: "2",
+    title: "Modern 4-Bedroom Duplex",
+    price: 8200000,
+    location: "Maitama, Abuja",
+    description:
+      "Elegant duplex in Maitama featuring 4 spacious bedrooms, a private garden, boys quarters, and a 2-car garage. Located in a serene and secure estate.",
+    imageUrl: "/assets/generated/prop-2.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Fatima Bello",
+    ownerPhone: "+2348059876543",
+    ownerRole: "agent",
+    createdAt: Date.now() - 86400000 * 4,
+  },
+  {
+    id: "3",
+    title: "Self-Contain Studio Flat",
+    price: 650000,
+    location: "Yaba, Lagos",
+    description:
+      "A well-finished self-contain studio with tiled floors, fitted kitchen, and steady water supply. Perfect for young professionals in Lagos.",
+    imageUrl: "/assets/generated/prop-3.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Chidi Nwosu",
+    ownerPhone: "+2347012345678",
+    ownerRole: "owner",
+    createdAt: Date.now() - 86400000 * 3,
+  },
+  {
+    id: "4",
+    title: "Spacious 3-Bedroom Bungalow",
+    price: 3100000,
+    location: "GRA Phase 2, Port Harcourt",
+    description:
+      "Lovely bungalow in a quiet GRA neighborhood with 3 bedrooms, a generator house, and a large compound. Excellent for families seeking peace and space.",
+    imageUrl: "/assets/generated/prop-4.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Sandra Amadi",
+    ownerPhone: "+2348023456789",
+    ownerRole: "agent",
+    createdAt: Date.now() - 86400000 * 2,
+  },
+  {
+    id: "5",
+    title: "Prime Office Space",
+    price: 5900000,
+    location: "Victoria Island, Lagos",
+    description:
+      "Premium office space on the 4th floor of a Grade-A building on VI. Features open-plan layout, central AC, high-speed internet, and dedicated parking.",
+    imageUrl: "/assets/generated/prop-5.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Tunde Adeyemi",
+    ownerPhone: "+2348067891234",
+    ownerRole: "agent",
+    createdAt: Date.now() - 86400000,
+  },
+  {
+    id: "6",
+    title: "Penthouse with City View",
+    price: 12500000,
+    location: "Ikeja GRA, Lagos",
+    description:
+      "Breathtaking penthouse apartment on the 12th floor with panoramic city views, floor-to-ceiling windows, a rooftop terrace, and concierge services.",
+    imageUrl: "/assets/generated/prop-6.dim_400x300.jpg",
+    ownerId: "seed",
+    ownerName: "Ngozi Eze",
+    ownerPhone: "+2348045678901",
+    ownerRole: "owner",
+    createdAt: Date.now(),
+  },
+];
+
+const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<AppUser | null>(null);
-  const [savedProperties, setSavedProperties] = useState<string[]>([
-    "prop-1",
-    "prop-3",
-  ]);
+  const [user, setUser] = useState<User | null>(() => {
+    try {
+      const stored = localStorage.getItem("directnest_user");
+      return stored ? JSON.parse(stored) : null;
+    } catch {
+      return null;
+    }
+  });
 
-  const toggleSaved = useCallback((id: string) => {
-    setSavedProperties((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
-    );
-  }, []);
+  const [properties, setProperties] = useState<Property[]>(() => {
+    try {
+      const stored = localStorage.getItem("directnest_properties");
+      return stored ? JSON.parse(stored) : SEED_PROPERTIES;
+    } catch {
+      return SEED_PROPERTIES;
+    }
+  });
 
-  const isSaved = useCallback(
-    (id: string) => savedProperties.includes(id),
-    [savedProperties],
-  );
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("directnest_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("directnest_user");
+    }
+  }, [user]);
 
-  const login = (user: AppUser) => setCurrentUser(user);
-  const logout = () => setCurrentUser(null);
+  useEffect(() => {
+    localStorage.setItem("directnest_properties", JSON.stringify(properties));
+  }, [properties]);
+
+  function login(u: User) {
+    setUser(u);
+  }
+
+  function logout() {
+    setUser(null);
+  }
+
+  function addProperty(
+    p: Omit<
+      Property,
+      "id" | "ownerId" | "ownerName" | "ownerPhone" | "ownerRole" | "createdAt"
+    >,
+  ) {
+    if (!user) return;
+    const newProp: Property = {
+      ...p,
+      id: Date.now().toString(),
+      ownerId: user.id,
+      ownerName: user.fullName,
+      ownerPhone: user.phone,
+      ownerRole: user.role,
+      createdAt: Date.now(),
+    };
+    setProperties((prev) => [newProp, ...prev]);
+  }
 
   return (
     <AppContext.Provider
-      value={{
-        currentUser,
-        savedProperties,
-        toggleSaved,
-        isSaved,
-        login,
-        logout,
-        isAuthenticated: !!currentUser,
-      }}
+      value={{ user, login, logout, properties, addProperty }}
     >
       {children}
     </AppContext.Provider>

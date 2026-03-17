@@ -53,6 +53,87 @@ export enum UserRole {
     user = "user",
     guest = "guest"
 }
+
+export interface UserProfile {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    avatarKey: string;
+    verificationStatus: string;
+    bio: string;
+    createdAt: bigint;
+    updatedAt: bigint;
+}
+
+export interface UserProfileInput {
+    name: string;
+    email: string;
+    phone: string;
+    role: string;
+    avatarKey: string;
+    bio: string;
+}
+
+export interface Message {
+    id: string;
+    senderId: string;
+    receiverId: string;
+    propertyId: string;
+    content: string;
+    createdAt: bigint;
+    isRead: boolean;
+}
+
+export interface Review {
+    id: string;
+    authorId: string;
+    targetId: string;
+    targetType: string;
+    rating: bigint;
+    comment: string;
+    createdAt: bigint;
+}
+
+export interface Property {
+    id: string;
+    title: string;
+    price: bigint;
+    locationState: string;
+    locationCity: string;
+    locationArea: string;
+    propertyType: string;
+    listingFor: string;
+    description: string;
+    imageKeys: Array<string>;
+    bedrooms: bigint;
+    bathrooms: bigint;
+    sizeSqm: bigint;
+    amenities: Array<string>;
+    ownerId: string;
+    agentId: string;
+    status: string;
+    createdAt: bigint;
+}
+
+export interface PropertyInput {
+    title: string;
+    price: bigint;
+    locationState: string;
+    locationCity: string;
+    locationArea: string;
+    propertyType: string;
+    listingFor: string;
+    description: string;
+    imageKeys: Array<string>;
+    bedrooms: bigint;
+    bathrooms: bigint;
+    sizeSqm: bigint;
+    amenities: Array<string>;
+    agentId: string;
+}
+
 export interface backendInterface {
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     createCheckoutSession(items: Array<ShoppingItem>, successUrl: string, cancelUrl: string): Promise<string>;
@@ -62,4 +143,19 @@ export interface backendInterface {
     isStripeConfigured(): Promise<boolean>;
     setStripeConfiguration(config: StripeConfiguration): Promise<void>;
     transform(input: TransformationInput): Promise<TransformationOutput>;
+    // User Profile
+    createOrUpdateUserProfile(input: UserProfileInput): Promise<string>;
+    getMyProfile(): Promise<Option<UserProfile>>;
+    getUserProfile(userId: string): Promise<Option<UserProfile>>;
+    getAllUsers(): Promise<Array<UserProfile>>;
+    // Messages
+    sendMessage(receiverId: string, propertyId: string, content: string): Promise<string>;
+    getMyMessages(): Promise<Array<Message>>;
+    getConversation(otherUserId: string): Promise<Array<Message>>;
+    markMessageRead(messageId: string): Promise<boolean>;
+    // Reviews
+    createReview(targetId: string, targetType: string, rating: bigint, comment: string): Promise<string>;
+    getPropertyReviews(propertyId: string): Promise<Array<Review>>;
+    getUserReviews(userId: string): Promise<Array<Review>>;
+    deleteReview(reviewId: string): Promise<boolean>;
 }

@@ -1,119 +1,88 @@
 import { Toaster } from "@/components/ui/sonner";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MobileNav from "./components/MobileNav";
-import Navbar from "./components/Navbar";
+import {
+  Outlet,
+  RouterProvider,
+  createRootRoute,
+  createRoute,
+  createRouter,
+  redirect,
+} from "@tanstack/react-router";
 import { AppProvider } from "./context/AppContext";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import AgentProfilePage from "./pages/AgentProfilePage";
+import AddPropertyPage from "./pages/AddPropertyPage";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
-import LandingPage from "./pages/LandingPage";
-import MessagingPage from "./pages/MessagingPage";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
-import SavedPropertiesPage from "./pages/SavedPropertiesPage";
-import SearchPage from "./pages/SearchPage";
-import UploadPropertyPage from "./pages/UploadPropertyPage";
-import UserProfilePage from "./pages/UserProfilePage";
 
-function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen pb-16 md:pb-0">
-      <Navbar />
-      <main>{children}</main>
-      <MobileNav />
-    </div>
-  );
+const rootRoute = createRootRoute({
+  component: () => (
+    <>
+      <Toaster position="top-center" />
+      <Outlet />
+    </>
+  ),
+});
+
+const authRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/auth",
+  component: AuthPage,
+});
+
+function getUser() {
+  try {
+    const s = localStorage.getItem("directnest_user");
+    return s ? JSON.parse(s) : null;
+  } catch {
+    return null;
+  }
+}
+
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  beforeLoad: () => {
+    if (!getUser()) throw redirect({ to: "/auth" });
+  },
+  component: HomePage,
+});
+
+const addPropertyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/add-property",
+  beforeLoad: () => {
+    if (!getUser()) throw redirect({ to: "/auth" });
+  },
+  component: AddPropertyPage,
+});
+
+const propertyRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/property/$id",
+  beforeLoad: () => {
+    if (!getUser()) throw redirect({ to: "/auth" });
+  },
+  component: PropertyDetailPage,
+});
+
+const routeTree = rootRoute.addChildren([
+  authRoute,
+  indexRoute,
+  addPropertyRoute,
+  propertyRoute,
+]);
+
+const router = createRouter({ routeTree });
+
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
 }
 
 export default function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
-        <Toaster />
-        <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <LandingPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/home"
-            element={
-              <Layout>
-                <HomePage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/search"
-            element={
-              <Layout>
-                <SearchPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/property/:id"
-            element={
-              <Layout>
-                <PropertyDetailPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/upload"
-            element={
-              <Layout>
-                <UploadPropertyPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/messages"
-            element={
-              <Layout>
-                <MessagingPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/agent/:id"
-            element={
-              <Layout>
-                <AgentProfilePage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <Layout>
-                <UserProfilePage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/saved"
-            element={
-              <Layout>
-                <SavedPropertiesPage />
-              </Layout>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <Layout>
-                <AdminDashboardPage />
-              </Layout>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </AppProvider>
   );
 }

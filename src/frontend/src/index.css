@@ -1,0 +1,61 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0.99 0 0;
+    --foreground: 0.15 0.02 160;
+    --card: 0.99 0 0;
+    --card-foreground: 0.15 0.02 160;
+    --popover: 0.99 0 0;
+    --popover-foreground: 0.15 0.02 160;
+    --primary: 0.55 0.15 160;
+    --primary-foreground: 0.99 0 0;
+    --secondary: 0.94 0.03 160;
+    --secondary-foreground: 0.35 0.08 160;
+    --muted: 0.94 0.01 160;
+    --muted-foreground: 0.55 0.03 160;
+    --accent: 0.92 0.05 160;
+    --accent-foreground: 0.25 0.08 160;
+    --destructive: 0.55 0.2 25;
+    --destructive-foreground: 0.99 0 0;
+    --border: 0.88 0.02 160;
+    --input: 0.88 0.02 160;
+    --ring: 0.55 0.15 160;
+    --radius: 0.75rem;
+    --chart-1: 0.55 0.15 160;
+    --chart-2: 0.65 0.12 190;
+    --chart-3: 0.72 0.1 140;
+    --chart-4: 0.6 0.13 170;
+    --chart-5: 0.5 0.17 150;
+    --sidebar: 0.97 0.01 160;
+    --sidebar-foreground: 0.25 0.04 160;
+    --sidebar-primary: 0.55 0.15 160;
+    --sidebar-primary-foreground: 0.99 0 0;
+    --sidebar-accent: 0.92 0.04 160;
+    --sidebar-accent-foreground: 0.25 0.06 160;
+    --sidebar-border: 0.88 0.02 160;
+    --sidebar-ring: 0.55 0.15 160;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .app-shell {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    position: relative;
+  }
+}

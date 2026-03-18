@@ -10,6 +10,7 @@ import {
 import { AppProvider } from "./context/AppContext";
 import AddPropertyPage from "./pages/AddPropertyPage";
 import AuthPage from "./pages/AuthPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import HomePage from "./pages/HomePage";
 import PropertyDetailPage from "./pages/PropertyDetailPage";
 
@@ -26,6 +27,12 @@ const authRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/auth",
   component: AuthPage,
+});
+
+const forgotPasswordRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/forgot-password",
+  component: ForgotPasswordPage,
 });
 
 function getUser() {
@@ -66,6 +73,7 @@ const propertyRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   authRoute,
+  forgotPasswordRoute,
   indexRoute,
   addPropertyRoute,
   propertyRoute,

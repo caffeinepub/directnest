@@ -147,7 +147,7 @@ export default function AuthPage() {
         <div className="flex bg-muted rounded-xl p-1 mb-6">
           <button
             type="button"
-            data-ocid="auth.toggle_link"
+            data-ocid="auth.login_tab"
             onClick={() => setMode("login")}
             className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
               mode === "login"
@@ -159,6 +159,7 @@ export default function AuthPage() {
           </button>
           <button
             type="button"
+            data-ocid="auth.signup_tab"
             onClick={() => setMode("signup")}
             className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${
               mode === "signup"
@@ -170,7 +171,7 @@ export default function AuthPage() {
           </button>
         </div>
 
-        {mode === "login" ? (
+        {mode === "login" && (
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="login-email">Email</Label>
@@ -213,6 +214,16 @@ export default function AuthPage() {
                   )}
                 </button>
               </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  data-ocid="auth.forgot_password_link"
+                  onClick={() => navigate({ to: "/forgot-password" })}
+                  className="text-primary text-sm hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
             </div>
             <Button
               data-ocid="auth.submit_button"
@@ -233,7 +244,9 @@ export default function AuthPage() {
               </button>
             </p>
           </form>
-        ) : (
+        )}
+
+        {mode === "signup" && (
           <form onSubmit={handleSignup} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="signup-name">Full Name</Label>

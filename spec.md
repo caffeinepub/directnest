@@ -1,30 +1,21 @@
 # DirectNest
 
 ## Current State
-A SearchPage exists at `/search` with basic filter UI (state, property type, listing type, bedrooms, max price slider, amenities, verified-only checkbox). Filtering is triggered manually by clicking the Search button. All data comes from `mockDisplayProperties`.
+DirectNest is a property marketplace app with authentication, property listing, property detail, add property, messaging, and forgot password features. Backend has Users, Properties, Messages, and Reviews entities. Frontend has HomePage, AuthPage, AddPropertyPage, PropertyDetailPage routes.
 
 ## Requested Changes (Diff)
 
 ### Add
-- Min price input alongside max price to form a full price range filter
-- Auto-apply filters on any filter change (real-time filtering without needing to click Search)
-- Sort options: Price Low-High, Price High-Low, Newest, Most Bedrooms
-- Active filter count badge on mobile filter toggle
-- Clear All Filters button that resets all filters at once
+- Forgot password flow: a two-step flow where user enters their email, then resets their password
 
 ### Modify
-- Search page layout: sidebar (desktop) + collapsible filter panel (mobile) with results in main area
-- Price filter: replace single max-price slider with min/max price inputs + a range slider
-- Results header: show count, sort dropdown, and active filter tags
-- Filter state should persist in URL query params so search results are shareable/bookmarkable
+- AuthPage: add a "Forgot password?" link on the login form that triggers the forgot password flow
 
 ### Remove
-- Manual Search button as primary trigger (keep it, but filters also auto-apply)
+- Nothing
 
 ## Implementation Plan
-1. Update SearchPage to use URL query params (`useSearchParams`) to store filter state
-2. Replace price slider with a min/max dual input + optional slider for price range
-3. Add sort select with options: newest, price-asc, price-desc, bedrooms-desc
-4. Add sidebar layout on desktop (filters left, results right) and collapsible filter sheet on mobile
-5. Add "Clear All" button and active filter tags with individual remove badges
-6. Wire auto-filtering: filter logic runs on every state change (no separate doSearch trigger)
+1. Add a forgot password backend function: `resetPassword(email, newPassword)` that finds the user by email and updates their password
+2. Add ForgotPasswordPage (or modal flow) with two steps: (1) enter email, (2) enter new password + confirm
+3. Add route `/forgot-password` to App.tsx
+4. Add "Forgot password?" link on the login form in AuthPage
